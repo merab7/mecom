@@ -10,10 +10,10 @@
   </div>
 </header>
 {% if cart_products %}
-<div class="container mt-5 mb-5 border p-5">
+<div class="container mt-5 mb-5 border p-3 p-md-5">
   {% for key, item in quantities.items %}
-  <div class="mb-3 border-bottom mb-2 d-flex align-items-center">
-    <div class="col-md-4">
+  <div class="mb-3 border-bottom mb-2 row align-items-center">
+    <div class="col-12 col-md-4 mb-3 mb-md-0">
       {% for product in cart_products %} {% if product.name == item.name %}
       <img
         src="{{ product.image.url }}"
@@ -21,7 +21,7 @@
         alt="Product Image"
       />
     </div>
-    <div class="col-md-8">
+    <div class="col-12 col-md-8">
       <div class="card-body">
         <h5 class="card-title">{{ item.name }}</h5>
         {% if product.sale > 0 %}
@@ -91,12 +91,14 @@
     </div>
   </div>
   {% endfor %}
-  <div class="d-flex flex-row justify-content-between align-items-center mt-4">
-    <div class="summary-container">
+  <div
+    class="d-flex flex-column flex-md-row justify-content-between align-items-center mt-4"
+  >
+    <div class="summary-container text-center text-md-start">
       <h1 class="summary-heading">{% trans "SUM" %}:</h1>
       <span class="summary-amount">$ {{summary}}</span>
     </div>
-    <a href="{% url 'ch_out' %}" class="btn btn-success"
+    <a href="{% url 'ch_out' %}" class="btn btn-success mt-3 mt-md-0"
       >{% trans "Check Out" %}</a
     >
   </div>
@@ -107,7 +109,17 @@
     {{ user.username }} {% trans "your cart is empty!" %}
   </div>
 </div>
-
 {% endif %}
 <br /><br /><br />
 {% endblock %}
+<style>
+  @media (max-width: 768px) {
+    .summary-container {
+      margin-bottom: 1rem;
+    }
+
+    .btn {
+      font-size: 0.875rem;
+    }
+  }
+</style>

@@ -12,53 +12,62 @@
   </div>
 </header>
 <section class="container">
-  <div class="container p-5 mt-5 col-6">
-    <div class="card">
-      <div class="d-flex justify-content-between card-header">
-        <h5>{% trans "Order Summary" %}</h5>
-        <a href="{% url 'cart_sum' %}">{% trans "Edit" %}</a>
+  <div class="row justify-content-center">
+    <!-- Order Summary Section -->
+    <div class="col-12 col-md-8 col-lg-6 mb-5">
+      <div class="card h-100">
+        <div class="d-flex justify-content-between card-header">
+          <h5>{% trans "Order Summary" %}</h5>
+          <a href="{% url 'cart_sum' %}">{% trans "Edit" %}</a>
+        </div>
+        {% for key, item in quantities.items %}
+        <!--  -->
+        {% for product in cart_products%}
+        <!--  -->
+        {% if product.name == item.name %}
+        <div class="card-body border-bottom">
+          <h6 class="card-title">{% trans "Name" %}: {{ item.name }}</h6>
+          {% if product.sale > 0 %}
+          <h6 class="card-text">
+            {% trans "Price" %}: ${{ product.new_price }}
+          </h6>
+          {% else %}
+          <h6 class="card-text">{% trans "Price" %}: ${{ product.price }}</h6>
+          {% endif %}
+          <h6 class="card-text">{% trans "Size" %}: {{ item.size }}</h6>
+          <h6 class="card-text">{% trans "Quantity" %}: {{ item.quantity }}</h6>
+        </div>
+        {% endif %} {% endfor %} {% endfor %}
+        <div class="container p-2 text-success">
+          <h5>{% trans "Sum" %}: ₾{{summary}}</h5>
+        </div>
       </div>
-      {% for key, item in quantities.items %} {% for product in cart_products %}
-      {% if product.name == item.name %}
-      <div class="card-body border-bottom">
-        <h6 class="card-title">{% trans "Name" %}: {{ item.name }}</h6>
-        {% if product.sale > 0 %}
-        <h6 class="card-text">{% trans "price" %}: ${{ product.new_price }}</h6>
-        {% else %}
-        <h6 class="card-text">{% trans "price" %}: ${{ product.price }}</h6>
-        {% endif %}
-        <h6 class="card-text">{% trans "Size" %}: {{ item.size }}</h6>
-        <h6 class="card-text">{% trans "Quantity" %}: {{ item.quantity }}</h6>
-      </div>
-      {% endif %} {% endfor %} {% endfor %}
-      <div class="container p-2 text-success">
-        <h5>{% trans "sum" %}: ₾{{summary}}</h5>
+    </div>
+
+    <!-- Shipping Info Section -->
+    <div class="col-12 col-md-8 col-lg-6 mb-5">
+      <div class="card h-100">
+        <div class="card-header">{% trans "Shipping Info" %}</div>
+        <div class="card-body border-bottom">
+          <form
+            action="{% url 'billing' %}"
+            method="POST"
+            enctype="multipart/form-data"
+          >
+            {% csrf_token %}
+            <legend class="border-bottom mb-4">
+              <h3>{% trans "Shipping Info" %}</h3>
+            </legend>
+            {{ shipping_info|crispy }}
+            <div class="d-flex justify-content-between">
+              <button class="btn btn-outline-info mt-4" type="submit">
+                {% trans "Continue to Billing" %}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   </div>
-  <div class="container p-5 mb-5 col-6">
-    <div class="card">
-      <div class="card-header">{% trans "Shipping Info" %}</div>
-      <div class="card-body border-bottom">
-        <form
-          action="{% url 'billing' %}"
-          method="POST"
-          enctype="multipart/form-data"
-        >
-          {% csrf_token %}
-          <legend class="border-bottom mb-4">
-            <h3>{% trans "Shipping Info" %}</h3>
-          </legend>
-          {{ shipping_info| crispy }}
-          <div class="d-flex justify-content-between">
-            <button class="btn btn-outline-info mt-4" type="submit">
-              {% trans "Continue to Billing" %}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-  <div class="container"></div>
 </section>
 {% endblock %}
