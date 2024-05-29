@@ -1,8 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login
 from .models import Product, Category, ProductSize
-from card.cart import Cart
 from django.http import JsonResponse
 from django.core.paginator import Paginator
 from django.utils import translation
@@ -79,9 +76,7 @@ def max_quantity(request):
 
 
 def quantity(request):
-    cart = Cart(request)
-
-    if request.POST.get('action') == 'post':
+  if request.POST.get('action') == 'post':
         product_size = request.POST.get('product_size')
         product_id = int(request.POST.get('product_id'))
         product = get_object_or_404(Product, id=product_id)

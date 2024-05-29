@@ -103,12 +103,11 @@
         {% endif %}
 
         <span class="current">
-          {% trans "Page" %} {{ page_obj.number }} of {{
-          page_obj.paginator.num_pages }}.
+          Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
         </span>
 
         {% if page_obj.has_next %}
-        <a href="?page={{ page_obj.next_page_number }}">{% trans "next" %}</a>
+        <a href="?page={{ page_obj.next_page_number }}">{% trans "nex" %}t</a>
         <a href="?page={{ page_obj.paginator.num_pages }}"
           >{% trans "last" %} &raquo;</a
         >

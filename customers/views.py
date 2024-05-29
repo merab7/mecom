@@ -1,23 +1,18 @@
-from django.shortcuts import render
-from django.contrib.auth import login, authenticate
 from .forms import SignUpForm, ProfileUpdateForm, UserUpdateForm, ChangePasswordForm
 from payment.forms import ShippingInfo
 from payment.models import ShippingAddress
-from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from payment.models import Order_item, Order
 from django.core.paginator import Paginator
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import authenticate, login
+from django.shortcuts import render, redirect
+from django.contrib.auth import login
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.contrib.sites.shortcuts import get_current_site
-from django.urls import reverse
-from .forms import SignUpForm
 from .tokens import email_verification_token
 from django.contrib.auth.models import User
 #this decorator prevents signed users form accessing the register page 
