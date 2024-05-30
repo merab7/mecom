@@ -182,7 +182,7 @@ def proc_order(request):
             EMAIL = env('EXCAVATIO')
             EXCAVATIOPASS = env('EXCAVATIOPASS')
             message_content = f"Here is your order:\n" + "\n".join([f"n{x['em_name']}\n Price: ₾ {x['em_price']} \n Size: {x['em_size']} \n Quantity: {x['em_quantity']}" for x in sum_order])
-            content = {'order_num': f"Order number: {order.pk}", 'message': message_content, 'sum': total_paid}
+            content = {'order_num': f"Order number: {order.pk}", 'message': message_content, 'sum': total_paid, 'shipping_address':shipping_address}
 
             # Create the email message
             msg = MIMEMultipart()
@@ -190,7 +190,7 @@ def proc_order(request):
             msg['To'] = email
             msg['Subject'] = 'Your order confirmation'
 
-            body = f"{content['order_num']}\n{content['message']}\nTotal Paid: {content['sum']}"
+            body = f"{content['order_num']}\n{content['message']}\nTotal Paid: {content['sum']}\nShipping address: {content['shipping_address']}"
             msg.attach(MIMEText(body, 'plain', 'utf-8'))
 
             # Send the email
