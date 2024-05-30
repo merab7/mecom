@@ -5,7 +5,15 @@ from .forms import ShippingInfo, PaymentForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib import messages
-from store.models import Product
+from store.models import ProductSize, Product
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.utils import formataddr
+import environ
+
+env = environ.Env()
+environ.Env.read_env()
 
 
 def checkout(request):
@@ -106,6 +114,7 @@ def proc_order(request):
     cart_products = cart.get_products()
     quantities = cart.get_quantities()
     prices = []
+
     if quantities:
         for key, item in quantities.items():
             for product in cart_products:
@@ -151,11 +160,50 @@ def proc_order(request):
 
                         set_order_item = Order_item(order=order, product=product_item, user=user, quantity=quantity, price=product_price, size=size)
                         set_order_item.save()
+                        #updating products database after successful purchase
+                        for x in ProductSize.objects.all():
+                            if x.product == product_item and x.size == size:
+                                x.quantity = x.quantity - quantity
+                                x.save()
 
-                    #empty the cart
+            # Send purchase confirmation email to the customer
+            sum_order = []
+            for key, item in quantities.items():
+                for product in cart_products:
+                    if product.name == item['name']:
+                        sum_item = {
+                            'em_name': item['name'],
+                            'em_price': product.new_price if product.sale > 0 else item['price'],
+                            'em_size': item['size'],
+                            'em_quantity': item['quantity']
+                        }
+                        sum_order.append(sum_item)
+
+            EMAIL = env('EXCAVATIO')
+            EXCAVATIOPASS = env('EXCAVATIOPASS')
+            message_content = f"Here is your order:\n" + "\n".join([f"n{x['em_name']}\n Price: ₾ {x['em_price']} \n Size: {x['em_size']} \n Quantity: {x['em_quantity']}" for x in sum_order])
+            content = {'order_num': f"Order number: {order.pk}", 'message': message_content, 'sum': total_paid}
+
+            # Create the email message
+            msg = MIMEMultipart()
+            msg['From'] = formataddr(('Ecomge', EMAIL))
+            msg['To'] = email
+            msg['Subject'] = 'Your order confirmation'
+
+            body = f"{content['order_num']}\n{content['message']}\nTotal Paid: {content['sum']}"
+            msg.attach(MIMEText(body, 'plain', 'utf-8'))
+
+            # Send the email
+            with smtplib.SMTP('smtp.gmail.com', 587) as mail:
+                mail.ehlo()
+                mail.starttls()
+                mail.login(EMAIL, EXCAVATIOPASS)
+                mail.send_message(msg)
+
+            # Empty the cart
             for key in list(request.session.keys()):
                 if key == 'session_key':
-                    del request.session[f'{key}']
+                    del request.session[key]
 
             messages.success(request, "Order Placed")
             return redirect('home')
@@ -164,5 +212,4 @@ def proc_order(request):
             return redirect('checkout')
     else:
         return redirect('home')
-
     
