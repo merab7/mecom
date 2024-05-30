@@ -15,7 +15,7 @@ environ.Env.read_env()
 SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env.bool('DEBUG', default=True)
 
 ALLOWED_HOSTS = ["*"]
 
@@ -133,18 +133,12 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATIC_URL = 'static/'
 STATICFILES_DIRS = ['static/']
 
-MEDIA_URL = 'media/'
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-# Add the LOCALE_PATHS setting
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
-
-]
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-
-LOCALE_PATHS = [
-    BASE_DIR / 'locale',  # Adjust this path as needed
-]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
 
